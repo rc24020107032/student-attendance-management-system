@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Attendance Management System</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo">
+        <div>
+          <h1>Attendance Management System</h1>
+          <p class="subtitle">B.Voc Software Development - Department Portal</p>
+        </div>
+      </div>
+      <nav class="nav-tabs">
+        <button class="nav-btn active" data-tab="faculty">Faculty Portal</button>
+        <button class="nav-btn" data-tab="student">Student Portal</button>
+        <button class="nav-btn" data-tab="admin">Admin Console</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <div id="toast" class="toast hidden"></div>
+
+    <!-- Faculty Tab -->
+    <section id="faculty-tab" class="tab-pane active">
+      <div class="pane-header">
+        <h2>Mark Attendance</h2>
+        <p>Record daily attendance for enrolled students.</p>
+      </div>
+
+      <div class="card form-card">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="session-date">Session Date</label>
+            <input type="date" id="session-date" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="session-course">Course</label>
+            <select id="session-course" class="form-control">
+              <option value="Full Stack Web Dev - 2">Full Stack Web Dev - 2</option>
+              <option value="Data Structures & Algorithms">Data Structures & Algorithms</option>
+              <option value="Database Management Systems">Database Management Systems</option>
+              <option value="Cloud & DevOps">Cloud & DevOps</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="faculty-name">Faculty In-Charge</label>
+            <input type="text" id="faculty-name" class="form-control" value="Faculty In-Charge" placeholder="Faculty name">
+          </div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <div class="card-title-bar">
+          <h3>Class Roster</h3>
+          <div class="quick-actions">
+            <button id="mark-all-present" class="btn btn-secondary btn-sm">Mark All Present</button>
+            <button id="mark-all-absent" class="btn btn-secondary btn-sm">Mark All Absent</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Roll No</th>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>Status</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+            <tbody id="faculty-student-list">
+              <tr>
+                <td colspan="5" class="text-center text-muted">Loading students...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-footer">
+          <button id="submit-attendance-btn" class="btn btn-primary">
+            Save Attendance
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Student Tab -->
+    <section id="student-tab" class="tab-pane">
+      <div class="pane-header">
+        <h2>Student Attendance Summary</h2>
+        <p>Check attendance percentage and course session history.</p>
+      </div>
+
+      <div class="card search-card">
+        <form id="student-search-form" class="search-form">
+          <div class="form-group flex-grow">
+            <label for="student-roll-search">Roll Number</label>
+            <input type="text" id="student-roll-search" class="form-control" placeholder="e.g. SD101" required>
+          </div>
+          <button type="submit" class="btn btn-primary">View Report</button>
+        </form>
+      </div>
+
+      <div id="student-result-container" class="hidden">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Student</div>
+            <div id="res-student-name" class="stat-value">-</div>
+            <div id="res-student-roll" class="stat-sub">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Attendance Percentage</div>
+            <div id="res-student-pct" class="stat-value stat-highlight">-</div>
+            <div id="res-student-eligibility" class="badge badge-success">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Attended</div>
+            <div id="res-student-present" class="stat-value text-success">0</div>
+            <div id="res-student-total" class="stat-sub">out of 0 classes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Absent</div>
+            <div id="res-student-absent" class="stat-value text-danger">0</div>
+            <div class="stat-sub">Late: <span id="res-student-late">0</span></div>
+          </div>
+        </div>
+
+        <div class="card table-card mt-4">
+          <div class="card-title-bar">
+            <h3>Attendance Log History</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Course</th>
+                  <th>Faculty</th>
+                  <th>Status</th>
+                  <th>Remarks</th>
+                </tr>
+              </thead>
+              <tbody id="student-history-list">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Admin Tab -->
+    <section id="admin-tab" class="tab-pane">
+      <div class="pane-header">
+        <h2>Admin Console</h2>
+        <p>Manage student records and view system logs.</p>
+      </div>
+
+      <div class="grid-2col">
+        <div class="card">
+          <h3>Add Student</h3>
+          <form id="add-student-form" class="mt-3">
+            <div class="form-group">
+              <label for="new-roll">Roll Number *</label>
+              <input type="text" id="new-roll" class="form-control" placeholder="e.g. SD105" required>
+            </div>
+            <div class="form-group">
+              <label for="new-name">Full Name *</label>
+              <input type="text" id="new-name" class="form-control" placeholder="e.g. Ananya Roy" required>
+            </div>
+            <div class="form-group">
+              <label for="new-email">Email</label>
+              <input type="email" id="new-email" class="form-control" placeholder="e.g. ananya@university.edu">
+            </div>
+            <div class="form-group">
+              <label for="new-course">Course</label>
+              <input type="text" id="new-course" class="form-control" value="B.Voc Software Development">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Register Student</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-title-bar">
+            <h3>File System Audit Logs</h3>
+            <button id="refresh-logs-btn" class="btn btn-secondary btn-sm">Refresh</button>
+          </div>
+          <p class="text-sm text-muted">Entries logged by file system module in <code>logs/attendance.log</code>:</p>
+          <div class="log-viewer" id="log-viewer">
+            <code>Loading logs...</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="card table-card mt-4">
+        <div class="card-title-bar">
+          <h3>Registered Students</h3>
+          <span id="students-count-badge" class="badge badge-info">0 Students</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Batch</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="admin-students-table">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>Student Attendance Management System | B.Voc (Software Development) Sem 5</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
